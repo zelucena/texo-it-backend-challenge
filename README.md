@@ -1,7 +1,27 @@
+Copy `.env.example` to `.env` and `.env.testing.example` to `.env.testing`
+
+The database of choice is sqlite so it shouldn't require any further configuration.
+
+Please have Composer / Laravel CLI set-up from this point on as you wish . I personally have used Laradock but have not included it.
+In such case the following commands would be run inside the `workspace` container, preferably as user `laradock` id=1000
+
+`docker-compose exec --user=1000 -it workspace bash`
 ```
 composer install
 php artisan key:generate
+php artisan migrate
 ```
+It should prompt you with the message "The SQLite database does not exist: database/database.sqlite. Would you like to create it?" Please enter `Yes`.
+You may also create a blank file `database/database.sqlite`
+
+We're using SQlite in file to persist migrations and data across connections. Out tests will be using SQlite in-memory.
+The provided dataset file is already available inside `storage/app/dataset/movielist.csv`.
+You can use another file too, as long as you provide the absolute path for it.
+Mine is `/var/www/texo-it-backend/storage/app/dataset/movielist.csv`
+Then you can check out the endpoint `/api/movies/awards-intervals`
+
+Test using `php artisan test`. Our test should pass.
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

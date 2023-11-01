@@ -27,28 +27,24 @@ class ImportMovies extends Command
      */
     public function handle()
     {
-        $csvFilePath = $this->ask('Enter the path to the CSV file');
+        $csvFilePath = $this->ask('Enter the absolute path to the CSV file');
 
         if (!file_exists($csvFilePath)) {
-            $this->error('File not found. Please provide a valid file path.');
+            $this->error('File not found. Please tupe again.');
             return;
         }
 
-        $csvData = array_map(function($line) {
+        $csvData = collect(file($csvFilePath))->map(function ($line) {
             return str_getcsv($line, ';');
-        }, file($csvFilePath));
+        });
 
         if (count($csvData) === 0) {
             $this->error('CSV file is empty.');
             return;
         }
 
-        $header = array_map('trim', array_shift($csvData));
+        $csvData->shift(); // remove header
 
-        if (!$this->validateCsvHeader($header)) {
-            $this->error('Invalid CSV structure. The CSV file should have columns: year, title, studios, producers, winner.');
-            return;
-        }
 
         $this->info('Importing movies from the CSV file...');
 
@@ -65,11 +61,5 @@ class ImportMovies extends Command
         });
 
         $this->info('Movies imported successfully.');
-    }
-
-    protected function validateCsvHeader(array $header): bool
-    {
-        $expectedHeader = ['year', 'title', 'studios', 'producers', 'winner'];
-        return count($header) === count($expectedHeader) && empty(array_diff($expectedHeader, $header));
     }
 }
