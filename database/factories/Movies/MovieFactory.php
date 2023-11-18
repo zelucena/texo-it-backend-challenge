@@ -13,7 +13,6 @@ class MovieFactory extends Factory
             'year' => $this->faker->numberBetween(1900, 2020),
             'title' => $this->faker->sentence(3),
             'studios' => $this->faker->company,
-            'producers' => $this->faker->name,
             'winner' => $this->faker->boolean(50),
         ];
     }

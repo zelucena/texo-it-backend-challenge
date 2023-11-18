@@ -15,7 +15,14 @@ class Movie extends Model
         'year',
         'title',
         'studios',
-        'producers',
         'winner',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function producers()
+    {
+        return $this->belongsToMany(Producer::class, 'producers_movies');
+    }
 }

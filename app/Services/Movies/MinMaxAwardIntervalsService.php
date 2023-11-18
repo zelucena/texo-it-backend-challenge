@@ -14,20 +14,24 @@ class MinMaxAwardIntervalsService {
     public function getMinMaxAwardIntervals() {
         $ranking = DB::select("
         WITH producers_rank AS
-        (SELECT producers as producer,
+        (SELECT producer,
                 previousWin,
                 followingWin,
                 interval
             FROM
-                (SELECT producers,
-                        YEAR previousWin,
-                        LEAD(YEAR) OVER (PARTITION BY PRODUCERS ORDER BY YEAR) followingWin,
-                        LEAD(YEAR) OVER (PARTITION BY PRODUCERS ORDER BY YEAR) - YEAR AS interval,
-                        COUNT(*) OVER (PARTITION BY PRODUCERS ORDER BY YEAR DESC) AS totalAwards
-                    FROM movies
-                    WHERE winner = true
-                    ORDER BY producers,
-                        YEAR) subq
+                (
+                SELECT
+                    producers.name as producer,
+                    YEAR previousWin,
+                    LEAD(YEAR) OVER (PARTITION BY PRODUCERS.id ORDER BY YEAR) followingWin,
+                    LEAD(YEAR) OVER (PARTITION BY PRODUCERS.id ORDER BY YEAR) - YEAR AS interval,
+                    COUNT(*) OVER (PARTITION BY PRODUCERS.id ORDER BY YEAR DESC) AS totalAwards
+                FROM movies
+                    inner join producers_movies on movies.id = producers_movies.movie_id
+                    inner join producers on producers.id = producers_movies.producer_id
+                WHERE winner = true
+                ORDER BY producers.name, year
+                ) subq
             WHERE totalAwards > 1 )
         SELECT *,
             'min' AS ranking
