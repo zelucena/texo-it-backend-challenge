@@ -5,7 +5,6 @@ namespace App\Actions\Movies;
 use App\Models\MovielistIntegration;
 use App\Models\Movies\Movie;
 use App\Models\Movies\Producer;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
 class ImportMoviesAction {
